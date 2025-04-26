@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>For My Love</title>
   <style>
     body {
@@ -24,8 +25,10 @@
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
       backdrop-filter: blur(8px);
+      width: 80%;
       max-width: 400px;
       z-index: 1;
+      margin: 0 15px;
     }
     h1 {
       font-size: 2.5em;
@@ -45,6 +48,8 @@
       color: white;
       cursor: pointer;
       transition: background 0.3s;
+      width: 80%;
+      max-width: 200px;
     }
     button:hover {
       background: #ff4757;
@@ -84,16 +89,59 @@
         opacity: 0;
       }
     }
+    
+    /* Media Queries for Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 2em;
+      }
+      p {
+        font-size: 1em;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+        width: 85%;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+      p {
+        font-size: 0.9em;
+        min-height: 40px;
+      }
+      button {
+        padding: 8px 16px;
+        font-size: 0.9em;
+      }
+      .heart {
+        width: 15px;
+        height: 15px;
+      }
+      .heart::before, .heart::after {
+        width: 15px;
+        height: 15px;
+      }
+      .heart::before {
+        top: -7.5px;
+      }
+      .heart::after {
+        left: -7.5px;
+      }
+    }
   </style>
 </head>
 <body>
-
 <div class="container">
   <h1>Hi, Love! ❤️</h1>
   <p id="loveMessage">You make my world brighter.</p>
   <button onclick="nextMessage()">Click for more ❤️</button>
 </div>
-
 <script>
   const messages = [
     "All the time i need your shining smile 😄",
@@ -107,28 +155,35 @@
     "Every day with you is a blessing. 🙏",
   ];
   let index = 0;
-
   function nextMessage() {
     index = (index + 1) % messages.length;
     document.getElementById('loveMessage').textContent = messages[index];
     createHeart();
   }
-
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
     heart.style.left = Math.random() * 100 + 'vw';
     heart.style.animationDuration = (Math.random() * 2 + 4) + 's';
     document.body.appendChild(heart);
-
     setTimeout(() => {
       heart.remove();
     }, 6000); // remove heart after animation
   }
-
   // Create random hearts floating automatically
   setInterval(createHeart, 800);
+  
+  // Adjust heart creation rate on mobile
+  if (window.innerWidth < 480) {
+    clearInterval(window.heartInterval);
+    window.heartInterval = setInterval(createHeart, 1500);
+  }
+  
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    clearInterval(window.heartInterval);
+    window.heartInterval = setInterval(createHeart, window.innerWidth < 480 ? 1500 : 800);
+  });
 </script>
-
 </body>
 </html>
