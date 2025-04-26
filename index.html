@@ -5,60 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>For My Love</title>
   <style>
-    * {
-      -webkit-touch-callout: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    html, body {
-      height: 100%;
-      width: 100%;
+    body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-    
-    body {
       background: linear-gradient(to right, #ff9a9e, #fad0c4);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      font-family: sans-serif;
       color: #fff;
       text-align: center;
-      position: relative;
     }
-    
     .container {
       background: rgba(255, 255, 255, 0.2);
-      padding: 40px 30px;
+      padding: 30px;
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
       backdrop-filter: blur(8px);
       width: 85%;
       max-width: 450px;
-      z-index: 1;
-      margin: 0 15px;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      margin: 15px;
     }
-    
     h1 {
-      font-size: 2.5em;
+      font-size: 2.2em;
       margin-bottom: 15px;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-    
     p {
-      font-size: 1.3em;
+      font-size: 1.2em;
       margin-bottom: 25px;
       min-height: 60px;
-      padding: 0 10px;
     }
-    
     button {
       background: #ff6b81;
       border: none;
@@ -67,20 +44,8 @@
       font-size: 1.1em;
       color: white;
       cursor: pointer;
-      transition: background 0.3s;
-      width: 80%;
-      max-width: 220px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      -webkit-appearance: none;
-      appearance: none;
-      user-select: none;
-      touch-action: manipulation;
+      width: 220px;
     }
-    
-    button:hover, button:active {
-      background: #ff4757;
-    }
-    
     .heart {
       position: fixed;
       width: 20px;
@@ -89,10 +54,8 @@
       transform: rotate(45deg);
       animation: float 6s linear infinite;
       opacity: 0.7;
-      pointer-events: none;
       z-index: 0;
     }
-    
     .heart::before, .heart::after {
       content: '';
       position: absolute;
@@ -101,17 +64,14 @@
       background: red;
       border-radius: 50%;
     }
-    
     .heart::before {
       top: -10px;
       left: 0;
     }
-    
     .heart::after {
       left: -10px;
       top: 0;
     }
-    
     @keyframes float {
       0% {
         transform: rotate(45deg) translateY(0);
@@ -122,50 +82,10 @@
         opacity: 0;
       }
     }
-    
-    /* Media Queries for Responsive Design */
-    @media (max-width: 768px) {
-      .container {
-        padding: 30px 25px;
-      }
-      h1 {
-        font-size: 2.2em;
-      }
-      p {
-        font-size: 1.2em;
-      }
-    }
-    
     @media (max-width: 480px) {
-      .container {
-        padding: 25px 20px;
-        width: 85%;
-      }
-      h1 {
-        font-size: 2em;
-      }
-      p {
-        font-size: 1.1em;
-        min-height: 50px;
-      }
-      button {
-        padding: 10px 20px;
-        font-size: 1em;
-      }
-      .heart {
-        width: 15px;
-        height: 15px;
-      }
-      .heart::before, .heart::after {
-        width: 15px;
-        height: 15px;
-      }
-      .heart::before {
-        top: -7.5px;
-      }
-      .heart::after {
-        left: -7.5px;
-      }
+      h1 { font-size: 1.8em; }
+      p { font-size: 1em; }
+      button { width: 80%; max-width: 200px; }
     }
   </style>
 </head>
@@ -177,20 +97,6 @@
 </div>
 
 <script>
-  // Prevent double tap to zoom
-  document.addEventListener('touchstart', function(event) {
-    if (event.touches.length > 1) {
-      event.preventDefault();
-    }
-  }, { passive: false });
-  
-  // Disable pinch zoom
-  document.addEventListener('touchmove', function(event) {
-    if (event.scale !== 1) {
-      event.preventDefault();
-    }
-  }, { passive: false });
-  
   const messages = [
     "All the time i need your shining smile 😄",
     "You are my sunshine! ☀️",
@@ -204,75 +110,26 @@
   ];
   
   let index = 0;
-  const loveMessage = document.getElementById('loveMessage');
-  const nextBtn = document.getElementById('nextBtn');
+  const btn = document.getElementById('nextBtn');
   
-  // Use touchend instead of click for mobile
-  nextBtn.addEventListener('touchend', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    nextMessage();
-    return false;
-  }, { passive: false });
-  
-  // Keep click for desktop
-  nextBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    nextMessage();
-  });
-  
-  function nextMessage() {
+  // Use simpler event handling
+  btn.addEventListener('click', function(e) {
     index = (index + 1) % messages.length;
-    loveMessage.textContent = messages[index];
+    document.getElementById('loveMessage').textContent = messages[index];
     createHeart();
-  }
+  });
   
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
-    heart.style.left = Math.random() * window.innerWidth + 'px';
-    heart.style.animationDuration = (Math.random() * 2 + 4) + 's';
+    heart.style.left = Math.random() * 100 + 'vw';
     document.body.appendChild(heart);
-    setTimeout(() => {
-      heart.remove();
-    }, 6000);
-  }
-  
-  // Control hearts creation rate based on device
-  function setupHeartCreation() {
-    if (window.heartInterval) {
-      clearInterval(window.heartInterval);
-    }
-    const isMobile = window.innerWidth < 480;
-    const rate = isMobile ? 1500 : 800;
-    const maxHearts = isMobile ? 8 : 15;
     
-    window.heartInterval = setInterval(() => {
-      if (document.querySelectorAll('.heart').length < maxHearts) {
-        createHeart();
-      }
-    }, rate);
+    setTimeout(() => heart.remove(), 6000);
   }
   
-  // Initial setup
-  setupHeartCreation();
-  
-  // Handle window resize - throttled to improve performance
-  let resizeTimeout;
-  window.addEventListener('resize', function() {
-    if (resizeTimeout) clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(setupHeartCreation, 300);
-  });
-  
-  // Initial hearts
-  for (let i = 0; i < 5; i++) {
-    setTimeout(() => createHeart(), i * 300);
-  }
-  
-  // Prevent zoom on iOS
-  document.addEventListener('gesturestart', function(e) {
-    e.preventDefault();
-  });
+  // Create initial hearts
+  setInterval(createHeart, 1000);
 </script>
 </body>
 </html>
