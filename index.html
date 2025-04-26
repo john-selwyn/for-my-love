@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>For My Love</title>
   <style>
     body {
@@ -18,41 +18,46 @@
       color: #fff;
       text-align: center;
       position: relative;
+      touch-action: manipulation;
     }
     .container {
       background: rgba(255, 255, 255, 0.2);
-      padding: 30px;
+      padding: 40px 30px;
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
       backdrop-filter: blur(8px);
-      width: 80%;
-      max-width: 400px;
+      width: 85%;
+      max-width: 450px;
       z-index: 1;
       margin: 0 15px;
     }
     h1 {
       font-size: 2.5em;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      min-height: 50px;
+      font-size: 1.3em;
+      margin-bottom: 25px;
+      min-height: 60px;
+      padding: 0 10px;
     }
     button {
       background: #ff6b81;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 25px;
       border-radius: 30px;
-      font-size: 1em;
+      font-size: 1.1em;
       color: white;
       cursor: pointer;
       transition: background 0.3s;
       width: 80%;
-      max-width: 200px;
+      max-width: 220px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    button:hover {
+    button:hover, button:active {
       background: #ff4757;
+      transform: scale(0.98);
     }
     .heart {
       position: absolute;
@@ -62,6 +67,7 @@
       transform: rotate(45deg);
       animation: float 6s linear infinite;
       opacity: 0.7;
+      pointer-events: none;
     }
     .heart::before, .heart::after {
       content: '';
@@ -93,31 +99,31 @@
     /* Media Queries for Responsive Design */
     @media (max-width: 768px) {
       .container {
-        padding: 20px;
+        padding: 30px 25px;
       }
       h1 {
-        font-size: 2em;
+        font-size: 2.2em;
       }
       p {
-        font-size: 1em;
+        font-size: 1.2em;
       }
     }
     
     @media (max-width: 480px) {
       .container {
-        padding: 15px;
+        padding: 25px 20px;
         width: 85%;
       }
       h1 {
-        font-size: 1.8em;
+        font-size: 2em;
       }
       p {
-        font-size: 0.9em;
-        min-height: 40px;
+        font-size: 1.1em;
+        min-height: 50px;
       }
       button {
-        padding: 8px 16px;
-        font-size: 0.9em;
+        padding: 10px 20px;
+        font-size: 1em;
       }
       .heart {
         width: 15px;
@@ -140,7 +146,7 @@
 <div class="container">
   <h1>Hi, Love! ❤️</h1>
   <p id="loveMessage">You make my world brighter.</p>
-  <button onclick="nextMessage()">Click for more ❤️</button>
+  <button id="nextBtn">Click for more ❤️</button>
 </div>
 <script>
   const messages = [
@@ -155,11 +161,19 @@
     "Every day with you is a blessing. 🙏",
   ];
   let index = 0;
+  
+  // Use proper event listener instead of onclick
+  document.getElementById('nextBtn').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent any default behavior
+    nextMessage();
+  });
+  
   function nextMessage() {
     index = (index + 1) % messages.length;
     document.getElementById('loveMessage').textContent = messages[index];
     createHeart();
   }
+  
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
@@ -170,20 +184,44 @@
       heart.remove();
     }, 6000); // remove heart after animation
   }
-  // Create random hearts floating automatically
-  setInterval(createHeart, 800);
   
-  // Adjust heart creation rate on mobile
-  if (window.innerWidth < 480) {
-    clearInterval(window.heartInterval);
-    window.heartInterval = setInterval(createHeart, 1500);
+  // Control hearts creation rate based on device
+  function setupHeartCreation() {
+    if (window.heartInterval) {
+      clearInterval(window.heartInterval);
+    }
+    const isMobile = window.innerWidth < 480;
+    const rate = isMobile ? 1500 : 800;
+    const maxHearts = isMobile ? 10 : 20;
+    
+    window.heartInterval = setInterval(() => {
+      // Only create new hearts if we don't have too many already
+      if (document.querySelectorAll('.heart').length < maxHearts) {
+        createHeart();
+      }
+    }, rate);
   }
   
-  // Handle window resize
+  // Initial setup
+  setupHeartCreation();
+  
+  // Handle window resize - throttled to improve performance
+  let resizeTimeout;
   window.addEventListener('resize', function() {
-    clearInterval(window.heartInterval);
-    window.heartInterval = setInterval(createHeart, window.innerWidth < 480 ? 1500 : 800);
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(setupHeartCreation, 300);
   });
+  
+  // Prevent zooming on double-tap
+  document.addEventListener('touchend', function(e) {
+    const now = Date.now();
+    const lastTouch = window.lastTouch || now;
+    const delta = now - lastTouch;
+    if (delta < 500 && delta > 0) {
+      e.preventDefault();
+    }
+    window.lastTouch = now;
+  }, false);
 </script>
 </body>
 </html>
